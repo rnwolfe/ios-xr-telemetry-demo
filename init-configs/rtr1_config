@@ -1,0 +1,49 @@
+hostname rtr1
+
+int gi0/0/0/0
+ ip add 10.1.1.1 255.255.255.0
+ no shut
+
+int gi0/0/0/1
+ ip add 10.2.1.1 255.255.255.0
+ no shut
+
+int gi0/0/0/2
+ ip add 10.3.1.1 255.255.255.0
+ no shut
+!
+
+router bgp 65000
+ bgp router-id 11.11.11.11
+ address-family ipv4 unicast
+  network 10.1.1.0/24
+  redistribute connected
+ !
+ neighbor 10.2.1.2
+  remote-as 65000
+  address-family ipv4 unicast
+  !
+ !
+ neighbor 10.3.1.2
+  remote-as 65000
+  address-family ipv4 unicast
+  !
+ !
+!
+
+telemetry model-driven
+ destination-group DGROUP1
+  address-family ipv4 10.1.1.11 port 5432
+   encoding self-describing-gpb
+   protocol tcp
+  !
+ !
+ sensor-group SGROUP1
+  sensor-path Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters
+  sensor-path openconfig-bgp:bgp/neighbors/neighbor/state
+ !
+ subscription SUB1
+  sensor-group-id SGROUP1 sample-interval 5000
+  destination-id DGROUP1
+  source-interface GigabitEthernet0/0/0/0
+ !
