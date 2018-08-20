@@ -1,7 +1,7 @@
 from kafka import KafkaConsumer
 import json
 
-KAFKA_TOPIC = 'telemetry'
+KAFKA_TOPIC = 'pipeline'
 KAFKA_BOOTSTRAP_SERVER = 'localhost:9092'
 
 if __name__ == "__main__":

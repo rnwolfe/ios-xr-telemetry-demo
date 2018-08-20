@@ -31,7 +31,7 @@ import json
 import logging
 
 
-KAFKA_TOPIC = 'telemetry'
+KAFKA_TOPIC = 'pipeline'
 KAFKA_BOOTSTRAP_SERVER = 'localhost:9092'
 
 
