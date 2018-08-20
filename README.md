@@ -5,6 +5,8 @@
 * Virtual Box
 * Cisco IOS-XRv Vagrant box ([instructions](https://xrdocs.io/getting-started/iosxr-vagrant-beta))
 
+## Topology
+![Topology](topology.png)
 ## Initializing
 
 ```
