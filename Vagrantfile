@@ -7,7 +7,6 @@
 # you're doing.
 
 Vagrant.configure(2) do |config|
-	
 	# YDK Python Tools box, telemetry receiver/handler
 	config.vm.define "ydk", primary: true do |ydk|
 	  ydk.vm.box = "ydk-py-ubuntu"
@@ -25,6 +24,7 @@ Vagrant.configure(2) do |config|
 
     config.vm.define "rtr1" do |node|
       node.vm.box =  "IOS-XRv"
+  	  node.vm.boot_timeout = 900
 
       # gig0/0/0/0 connected to link1, gig0/0/0/1 connected to link2, gig0/0/0/2 connected to link3, auto-config not supported.
 
@@ -44,6 +44,7 @@ Vagrant.configure(2) do |config|
 
     config.vm.define "rtr2" do |node|
       node.vm.box =  "IOS-XRv"
+      node.vm.boot_timeout = 900
 
       # gig0/0/0/0 connected to link2, gig0/0/0/1 connected to link3, auto-config not supported
       node.vm.network :private_network, virtualbox__intnet: "link2", auto_config: false
