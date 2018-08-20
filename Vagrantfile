@@ -7,20 +7,6 @@
 # you're doing.
 
 Vagrant.configure(2) do |config|
-	# YDK Python Tools box, telemetry receiver/handler
-	config.vm.define "ydk", primary: true do |ydk|
-	  ydk.vm.box = "ydk-py-ubuntu"
-	  ydk.vm.box_url = "http://ydk.cisco.com/vagrant/ydk-py-ubuntu/"
-
-	  # I raised the RAM because sometimes java wouldn't start kafka due to lack of free memory
-	  config.vm.provider "virtualbox" do |v|
-	    v.memory = 1024
-	  end
-
-	  ydk.vm.network :private_network, virtualbox__intnet: "link1", ip: "10.1.1.11"
-	  ydk.vm.provision "file", source: "init-configs/pipeline.conf", destination: "/home/vagrant/pipeline/pipeline.conf"
-	  ydk.vm.provision :shell, path: "scripts/ydk.sh", privileged: false
-	end
 
     config.vm.define "rtr1" do |node|
       node.vm.box =  "IOS-XRv"
@@ -59,5 +45,22 @@ Vagrant.configure(2) do |config|
 	  end
 
     end
+
+
+	# YDK Python Tools box, telemetry receiver/handler
+	config.vm.define "ydk", primary: true do |ydk|
+	  ydk.vm.box = "ydk-py-ubuntu"
+	  ydk.vm.box_url = "http://ydk.cisco.com/vagrant/ydk-py-ubuntu/"
+
+	  # I raised the RAM because sometimes java wouldn't start kafka due to lack of free memory
+	  config.vm.provider "virtualbox" do |v|
+	    v.memory = 1024
+	  end
+
+	  ydk.vm.network :private_network, virtualbox__intnet: "link1", ip: "10.1.1.11"
+	  ydk.vm.provision "file", source: "init-configs/pipeline.conf", destination: "/home/vagrant/pipeline/pipeline.conf"
+	  ydk.vm.provision :shell, path: "scripts/ydk.sh", privileged: true
+	
+	end
 
 end
