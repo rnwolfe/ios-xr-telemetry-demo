@@ -1,7 +1,6 @@
 # Essentials
-echo "Installing Java.."
-sudo apt-get -y -q install default-jdk
 echo "Updating packages.."
+sudo apt-get -y -q docker.io
 sudo apt-get -y -q update
 
 echo "Updating pip.."
@@ -11,19 +10,18 @@ sudo pip install -q kafka-python
 
 # Add route supernet for networks in use by IOS-XR topology without breaking internet default route.
 echo "Add route to virtual router networks.."
-sudo route add -net 10.0.0.0/8 gw 10.1.1.1
 
-# Get, configure, and run pipeline
-echo "Get, configure, and run pipeline.."
-mkdir /vagrant/pipeline
-git clone -q https://github.com/cisco/bigmuddy-network-telemetry-pipeline.git /vagrant/pipeline
-/vagrant/pipeline/bin/pipeline -config /vagrant/init-configs/pipeline.conf -log /vagrant/pipeline/pipeline.log 2> /dev/null &
+# Pull docker container
+sudo docker pull akshshar/pipeline-kafka
 
-# Get, configure, and run kafka
-echo "Get, configure, and run kafka/zookeeper.."
-wget -q http://apache.claz.org/kafka/2.0.0/kafka_2.11-2.0.0.tgz
-mkdir /vagrant/kafka
-tar -xzf kafka_2.11-2.0.0.tgz -C /vagrant/kafka
-mv /vagrant/kafka/kafka_2.11-2.0.0/* /vagrant/kafka/ 
-/vagrant/kafka/bin/zookeeper-server-start.sh /vagrant/kafka/config/zookeeper.properties 2> /dev/null &
-/vagrant/kafka/bin/kafka-server-start.sh /vagrant/kafka/config/server.properties 2> /dev/null &
+# Run container instance with needed ports exposed and pushing our pipeline.conf file into it.
+docker run -itd --name pk -v /vagrant/scripts/:/root/ -v /vagrant/init-configs/pipeline.conf:/data/pipeline.conf -p 5432:5432 -p 5958:5958 -p 9092:9092 -p 2181:2181 akshshar/pipeline-kafka
+
+# Once on the VM, get on the container and run scripts using:
+#   docker exec -it pk bash
+#   cd /root
+#   python show-bytes-on-change.py
+#   python consume-telemetry.py
+# 
+# You could also run in background using something like:
+#   python show-bytes-on-change.py > output.txt &
